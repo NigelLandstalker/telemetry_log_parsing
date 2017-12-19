@@ -6,8 +6,7 @@
 #implement multithreading
 
 #NON NATIVE IMPORTS (CHECK THESE ARE INSTALLED IF THE PROGRAM DOESN'T WORK!)
-import yaml
-import numpy as np
+import canParser as cp
 
 #Native imports
 import argparse #For CLI interface.
@@ -30,19 +29,6 @@ TZ_OFFSET = WSC_2017_TZ_OFFSET
 
 #Graphing Variables
 GRAPH_FONT_SIZE = 15
-
-c_lengths = {
-    'uint8_t' : 1,
-    'int8_t' : 1,
-    'uint16_t' : 2,
-    'int16_t' : 2,
-    'uint32_t' : 4,
-    'int32_t' : 4,
-	'uint64_t' : 8,
-	'int64_t' : 8,
-    'bitfield' : 1,
-    'float' : 4
-}
 
 #UTILITY FUNCTIONS: 
 def timestamp_to_datetime(timestamp):
@@ -67,40 +53,6 @@ def diff(a, b):
 	
 def floor(a): #A not stupid floor function that actually returns an int.
 	return int(math.floor(a))
-	
-def loadAsList(expandRepeatPackets=False):
-	allpackets = {}
-	allpackets['packets'] = []
-	for file in os.listdir('packets/'):
-		if file.endswith('.ignore.yaml') or not file.endswith('.yaml'):
-			 continue
-		f = open('packets/' + file, 'r')
-		yaml_file = yaml.load(f)
-		for packet in yaml_file['packets']:
-			packet['file'] = file
-			if expandRepeatPackets and 'repeat' in packet:
-				baseId = packet['id']
-				baseName = packet['name']
-				if 'offset' in packet:
-					offset = packet['offset']
-				else:
-					offset = 1
-				for i in range(packet['repeat']):
-					newPacket = packet.copy()
-					newPacket['id'] = baseId+i*offset
-					newPacket['name'] = baseName + "__" + str(i)
-					allpackets['packets'].append(newPacket)
-					del newPacket['repeat']
-			else:
-				try:
-					for i in range(len(packet['name'])):
-						newpacket = packet.copy()
-						newpacket['name'] = packet['name'][i]
-						newpacket['id'] = packet['id'][i]
-						allpackets['packets'].append(newpacket)
-				except:
-					allpackets['packets'].append(packet)
-	return allpackets
 	
 class Packet():
 	def __init__(self, timestamp, data):
@@ -379,7 +331,7 @@ def generate_pyplot_graphs(logged_packets, graphing_ids, graphing_vars, start_ti
 	plt.show()
 	
 if __name__ == "__main__":
-	packet_defs = {hex(packet["id"]) : packet for packet in loadAsList(expandRepeatPackets=True)['packets']} #BUILD THE PACKET DEFINITIONS FROM .yaml files
+	packet_defs = {hex(packet["id"]) : packet for packet in cp.loadAsList(expandRepeatPackets=True)['packets']} #BUILD THE PACKET DEFINITIONS FROM .yaml files
 
 	#Basic command line interface.
 	cli_parser = argparse.ArgumentParser(prog='parse_telemetry_log.py', description='Command-line interface for telemetry log parsing. Parses the files within the "logs" folder within the program\'s directory.')
@@ -450,7 +402,7 @@ if __name__ == "__main__":
 					try:
 						for entry in packet_def['data']:
 							entry_type  = entry['type']
-							hex_length  =  2 * c_lengths[entry_type]
+							hex_length  =  2 * cp.c_lengths[entry_type]
 							data_splice = data[hex_index : hex_index + hex_length]
 
 							#Perform an additional check for corrupted data
