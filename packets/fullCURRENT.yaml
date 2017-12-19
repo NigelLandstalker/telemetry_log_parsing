@@ -1,0 +1,156 @@
+# ===== FULLCURRENT CONTROL =======
+
+packets:
+  - name: fullcurrent_reset
+    description: Sets the tire radius for speed calculations.
+    id: 0x30
+    endian: little
+    data:
+      - name: unused_1
+        type: uint32_t
+      - name: unused_2
+        type: uint32_t
+  - name: fullcurrent_drive
+    description: Drive command.  This must be sent at a minimum of 4 hz.
+    id: 0x31
+    endian: little
+    data:
+      - name: motor_velocity
+        type: float
+        units: RPM
+      - name: motor_current
+        type: float
+        units: Amps
+
+# ===== FULLCURRENT SMARTS =======
+# Start at 0x160
+  - name: fullcurrent_identification
+    description: Motor controller identification information
+    id: 0x160
+    endian: little
+    repeat: 2
+    offset: 1
+    data:
+      - name: motor_controller_id
+        type: uint32_t
+      - name: serial_number
+        type: uint32_t
+  - name: fullcurrent_status_information
+    description: Motor controller status information
+    id: 0x162
+    endian: little
+    repeat: 2
+    offset: 1
+    data:
+      - name: limit_flags
+        type: uint16_t
+      - name: error_flags
+        type: uint16_t
+      - name: active_motor
+        type: uint16_t
+      - name: reserved
+        type: uint16_t
+  - name: fullcurrent_bus_measurement
+    description: Mototr controller bus measurement
+    id: 0x164
+    endian: little
+    repeat: 2
+    offset: 1
+    data:
+      - name: bus_voltage
+        type: float
+        units: V
+      - name: bus_current
+        type: float
+        units: A
+  - name: fullcurrent_velocity
+    description: Motor controller velocity measurement
+    id: 0x166
+    endian: little
+    repeat: 2
+    offset: 1
+    data:
+      - name: motor_velocity
+        type: float
+        units: rpm
+      - name: vehicle_velocity
+        type: float
+        units: m/s
+  - name: fullcurrent_phase_current
+    description: Motor controller phase current measurement
+    id: 0x168
+    endian: little
+    repeat: 2
+    offset: 1
+    data:
+      - name: phase_b_current
+        type: float
+        units: A rms
+      - name: phase_a_current
+        type: float
+        units: A rms
+  - name: fullcurrent_motor_voltage_vector
+    description: Motor controller motor voltage vector measurement
+    id: 0x170
+    endian: little
+    repeat: 2
+    offset: 1
+    data:
+      - name: vq
+        type: float
+        units: V
+      - name: vd
+        type: float
+        units: V
+  - name: fullcurrent_motor_current_vector
+    description: Motor controller motor current vector measurement
+    id: 0x172
+    endian: little
+    repeat: 2
+    offset: 1
+    data:
+      - name: iq
+        type: float
+        units: A
+      - name: id
+        type: float
+        units: A
+  - name: fullcurrent_motor_backemf
+    description: Motor controller motor backEMF measurement / prediction
+    id: 0x174
+    endian: little
+    repeat: 2
+    offset: 1
+    data:
+      - name: bemfq
+        type: float
+        units: V
+      - name: bemfd
+        type: float
+        units: V
+  - name: fullcurrent_heatsink_motor_temp
+    description: Motor controller heat-sink & motor temperature measurement
+    id: 0x176
+    endian: little
+    repeat: 2
+    offset: 1
+    data:
+      - name: motor_temp
+        type: float
+        units: C
+      - name: heatsink_temp
+        type: float
+        units: C
+  - name: fullcurrent_dsp_board_temp
+    description: Motor controlelr board temperature measurement
+    id: 0x178
+    endian: little
+    repeat: 2
+    offset: 1
+    data:
+      - name: dsp_board_temp
+        type: float
+        units: C
+      - name: reserved
+        type: float
+        units: 

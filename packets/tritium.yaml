@@ -1,0 +1,28 @@
+packets:
+  - name: tritium_motor_drive
+    description: Tritium Motor Drive Command
+    id: 0x121
+    endian: little
+    data:
+      - name: motor_velocity
+        type: float
+      - name: motor_current
+        type: float
+  - name: tritium_motor_power
+    description: Tritium Motor Power Command
+    id: 0x122
+    endian: little
+    data:
+      - name: reserved
+        type: float
+      - name: bus_current
+        type: float
+  - name: tritium_reset
+    description: Tritium Reset Command
+    id: 0x123
+    endian: little
+    data:
+      - name: unused1
+        type: float
+      - name: unused2
+        type: float

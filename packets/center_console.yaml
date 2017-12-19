@@ -1,0 +1,41 @@
+packets:
+  - name: center_console
+    description: status of all buttons and rotary encoders on the Center Console
+    id: 0x72
+    data:
+      - name: buttons
+        type: bitfield
+        bits:
+          - name: magic_a
+          - name: magic_b
+          - name: magic_c
+          - name: magic_d
+          - name: encoder1_btn
+          - name: encoder2_btn
+      - name: encoder1
+        type: uint8_t
+      - name: encoder2
+        type: uint8_t
+  - name: remote_control
+    description: status of all remote control commands
+    id: 0x71
+    data:
+      - name: commands
+        type: bitfield
+        bits:
+          - name: command_0
+          - name: command_1
+          - name: command_2
+          - name: command_3
+          - name: command_4
+          - name: command_5
+          - name: command_6
+          - name: command_7
+  - name: radio_info
+    description: Info about the FM radio on the Center Console (work in progress)
+    id: 0x070
+    data:
+      - name: frequency
+        type: uint8_t
+        conversion: 0.1
+        description: Decoded frequency based at 88MHz

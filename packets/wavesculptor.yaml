@@ -1,0 +1,265 @@
+packets:
+  - name: wsr_identification
+    description: WS RIGHT Identification Information
+    id: 0x140
+    endian: little
+    data:
+      - name: tritium_id
+        type: uint32_t
+      - name: serial_number
+        type: uint32_t
+  - name: wsr_status_information
+    description: WS RIGHT Status Information
+    id: 0x141
+    endian: little
+    data:
+      - name: limit_flags
+        type: uint16_t
+      - name: error_flags
+        type: uint16_t
+      - name: active_motor
+        type: uint16_t
+      - name: reserved
+        type: uint16_t
+  - name: wsr_bus_measurement
+    description: WS RIGHT Bus Measurement
+    id: 0x142
+    endian: little
+    data:
+      - name: bus_voltage
+        type: float
+        units: V
+      - name: bus_current
+        type: float
+        units: A
+  - name: wsr_velocity
+    description: WS RIGHT Velocity Measurement
+    id: 0x143
+    endian: little
+    data:
+      - name: motor_velocity
+        type: float
+        units: rpm
+      - name: vehicle_velocity
+        type: float
+        units: m/s
+  - name: wsr_phase_current
+    description: WS RIGHT Phase Current Measurement
+    id: 0x144
+    endian: little
+    data:
+      - name: phase_b_current
+        type: float
+        units: A rms
+      - name: phase_a_current
+        type: float
+        units: A rms
+  - name: wsr_motor_voltage_vector
+    description: WS RIGHT Motor Voltage Vector Measurement
+    id: 0x145
+    endian: little
+    data:
+      - name: vq
+        type: float
+        units: V
+      - name: vd
+        type: float
+        units: V
+  - name: wsr_motor_current_vector
+    description: WS RIGHT Motor Current Vector Measurement
+    id: 0x146
+    endian: little
+    data:
+      - name: iq
+        type: float
+        units: A
+      - name: id
+        type: float
+        units: A
+  - name: wsr_motor_backemf
+    description: WS RIGHT Motor BackEMF Measurement / Prediction
+    id: 0x147
+    endian: little
+    data:
+      - name: bemfq
+        type: float
+        units: V
+      - name: bemfd
+        type: float
+        units: V
+  - name: wsr_15_165_voltage_rail
+    description: WS RIGHT 15 and 1.65 Voltage Rail Measurement
+    id: 0x148
+    endian: little
+    data:
+      - name: reference_165v
+        type: float
+        units: V
+      - name: supply_15v
+        type: float
+        units: V
+  - name: wsr_25_12_voltage_rail
+    description: WS RIGHT 2.5V and 1.2V Voltage Rail Measurement
+    id: 0x149
+    endian: little
+    data:
+      - name: supply_12v
+        type: float
+        units: V
+      - name: supply_25v
+        type: float
+        units: V
+  - name: wsr_heatsink_motor_temp
+    description: WS RIGHT Heat-sink & Motor Temperature Measurement
+    id: 0x14b
+    endian: little
+    data:
+      - name: motor_temp
+        type: float
+        units: C
+      - name: heatsink_temp
+        type: float
+        units: C
+  - name: wsr_dsp_board_temp
+    description: WS RIGHT DPS Board Temperature Measurement
+    id: 0x14c
+    endian: little
+    data:
+      - name: dsp_board_temp
+        type: float
+        units: C
+      - name: reserved
+        type: float
+        units: 
+  - name: wsl_identification
+    description: WS LEFT Identification Information
+    id: 0x100
+    endian: little
+    data:
+      - name: tritium_id
+        type: uint32_t
+      - name: serial_number
+        type: uint32_t
+  - name: wsl_status_information
+    description: WS LEFT Status Information
+    id: 0x101
+    endian: little
+    data:
+      - name: limit_flags
+        type: uint16_t
+      - name: error_flags
+        type: uint16_t
+      - name: active_motor
+        type: uint16_t
+      - name: reserved
+        type: uint16_t
+  - name: wsl_bus_measurement
+    description: WS LEFT Bus Measurement
+    id: 0x102
+    endian: little
+    data:
+      - name: bus_voltage
+        type: float
+        units: V
+      - name: bus_current
+        type: float
+        units: A
+  - name: wsl_velocity
+    description: WS LEFT Velocity Measurement
+    id: 0x103
+    endian: little
+    data:
+      - name: motor_velocity
+        type: float
+        units: rpm
+      - name: vehicle_velocity
+        type: float
+        units: m/s
+  - name: wsl_phase_current
+    description: WS LEFT Phase Current Measurement
+    id: 0x104
+    endian: little
+    data:
+      - name: phase_b_current
+        type: float
+        units: A rms
+      - name: phase_a_current
+        type: float
+        units: A rms
+  - name: wsl_motor_voltage_vector
+    description: WS LEFT Motor Voltage Vector Measurement
+    id: 0x105
+    endian: little
+    data:
+      - name: vq
+        type: float
+        units: V
+      - name: vd
+        type: float
+        units: V
+  - name: wsl_motor_current_vector
+    description: WS LEFT Motor Current Vector Measurement
+    id: 0x106
+    endian: little
+    data:
+      - name: iq
+        type: float
+        units: A
+      - name: id
+        type: float
+        units: A
+  - name: wsl_motor_backemf
+    description: WS LEFT Motor BackEMF Measurement / Prediction
+    id: 0x107
+    endian: little
+    data:
+      - name: bemfq
+        type: float
+        units: V
+      - name: bemfd
+        type: float
+        units: V
+  - name: wsl_15_165_voltage_rail
+    description: WS LEFT 15 and 1.65 Voltage Rail Measurement
+    id: 0x108
+    endian: little
+    data:
+      - name: reference_165v
+        type: float
+        units: V
+      - name: supply_15v
+        type: float
+        units: V
+  - name: wsl_25_12_voltage_rail
+    description: WS LEFT 2.5V and 1.2V Voltage Rail Measurement
+    id: 0x109
+    endian: little
+    data:
+      - name: supply_12v
+        type: float
+        units: V
+      - name: supply_25v
+        type: float
+        units: V
+  - name: wsl_heatsink_motor_temp
+    description:  WS LEFT Heat-sink & Motor Temperature Measurement
+    id: 0x10b
+    endian: little
+    data:
+      - name: motor_temp
+        type: float
+        units: C
+      - name: heatsink_temp
+        type: float
+        units: C
+  - name: wsl_dsp_board_temp
+    description: WS LEFT DPS Board Temperature Measurement
+    id: 0x10c
+    endian: little
+    data:
+      - name: dsp_board_temp
+        type: float
+        units: C
+      - name: reserved
+        type: float
+        units: 

@@ -1,0 +1,94 @@
+packets:
+  - name: switch_states
+    description: status of switches and pots
+    id: 0x5a
+    endian: little
+    data:
+      - name: switches
+        type: bitfield
+        bits:
+          - name: direction_fwd
+          - name: direction_rev
+          - name: boosh
+          - name: cruise
+          - name: hazards
+          - name: magic1
+          - name: magic2
+          - name: console
+      - name: console_bkl_pot
+        type: uint8_t
+      - name: display_bkl_pot
+        type: uint8_t
+  - name: lights_control
+    description: directly controls light states
+    id: 0x5b
+    endian: little
+    data:
+      - name: lights
+        type: bitfield
+        bits:
+          - name: turn_left
+          - name: turn_right
+          - name: brake_left
+          - name: brake_right
+          - name: brake
+          - name: headlights
+  - name: car_speed
+    description: speed of car in meters per second
+    id: 0x5c
+    endian: little
+    data:
+      - name: speed
+        type: float
+  - name: cruise_info
+    description: cruise control status
+    id: 0x5d
+    endian: little
+    data:
+      - name: speed_limit
+        type: float
+      - name: speed_target
+        type: float
+  - name: cruise_param_set
+    description: cruise control parameters set 
+    id: 0x5e
+    endian: little
+    data:
+      - name: p
+        type: float
+      - name: i
+        type: float
+#degenerate packets
+  - name: c3_di_switches
+    description: status of all di switches
+    id: 0x015
+    endian: big
+    data:
+      - name: switches
+        type: bitfield
+        bits:
+          - name: boosh
+          - name: magic
+          - name: override
+          - name: hazards
+          - name: brake
+          - name: direction
+            values:
+                1: forward
+                0: reverse
+          - name: motor_enable
+            values:
+                1: motor enabled
+                0: motor disabled        
+  - name: c3_lights_blinkers
+    description: Turn signals from the steering wheel
+    id: 0x0A0
+    endian: big
+    data:
+      - name: flags
+        type: bitfield
+        bits:
+          - name: left_blinker
+            bitnum: 1
+          - name: right_blinker
+            bitnum: 1

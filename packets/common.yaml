@@ -1,0 +1,31 @@
+packets:
+  - name: kill
+    description: Emergency packet to kill the car
+    id: 0x020
+    data:
+      - name: board_id
+        type: uint8_t
+      - name: error_code
+        type: uint8_t
+
+  - name: set_rtc
+    description: Packet sent to set the RTC on any applicable boards
+    id: 0x021
+    data:
+      - name: unix_time
+        type: int64_t
+        units: seconds
+        
+  - name: freertos_debug_info
+    description: Packet for debugging FreeRTOS code on any board. Should not be sent in production code
+    id: 0x22
+    endian: little
+    data:
+      - name: tick_count
+        type: uint32_t
+        units: ticks
+      - name: high_water_mark
+        type: uint16_t
+        units: bytes
+      - name: task_count
+        type: uint8_t

@@ -1,0 +1,12 @@
+packets:
+  - name: driver_display
+    description: brake limit status
+    id: 0x060
+    endian: little
+    data:
+      - name: switches
+        type: bitfield
+        bits:
+          - name: brakes_on
+          - name: dip_1
+          - name: dip_2

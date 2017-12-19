@@ -1,0 +1,10 @@
+packets:
+  - name: packtemp
+    description: secondary pack temperature
+    id: 0x150
+    endian: little
+    endian: little
+    data:
+      - name: internal_temp
+        type: float
+        units: C
