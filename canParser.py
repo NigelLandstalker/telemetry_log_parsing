@@ -1,6 +1,8 @@
 import os
 import yaml
 
+YAML_PATH = os.path.join('..','..','software','cangen','packets') #MAY NEED TO CHANGE YAML PATH IF THE FILE STRUCTURE CHANGES
+
 c_lengths = {
 	'uint8_t' : 1,
 	'int8_t' : 1,
@@ -17,10 +19,10 @@ c_lengths = {
 def loadAsList(expandRepeatPackets=False):
 	allpackets = {}
 	allpackets['packets'] = []
-	for file in os.listdir('packets/'):
+	for file in os.listdir(YAML_PATH):
 		if file.endswith('.ignore.yaml') or not file.endswith('.yaml'):
 			continue
-		f = open('packets/' + file, 'r')
+		f = open(os.path.join(YAML_PATH, file), 'r')
 		yaml_file = yaml.load(f)
 		for packet in yaml_file['packets']:
 			packet['file'] = file

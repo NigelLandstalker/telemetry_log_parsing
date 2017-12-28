@@ -11,18 +11,17 @@ import canParser as cp
 #Native imports
 import argparse #For CLI interface.
 import csv
-import sys
 import struct
 import binascii
-import os
 import ast
-import math
 import time
 import datetime
-
-WSC_2017_TZ_OFFSET = 52200
+import os
+import sys
+import math
 
 #Global Variables
+WSC_2017_TZ_OFFSET = 52200
 DEFAULT_MAX_GRAPH_POINTS = 10000
 TIME_RESOLUTION_SECONDS  = 0
 TZ_OFFSET = WSC_2017_TZ_OFFSET
@@ -284,8 +283,12 @@ def read_csv(csv_title, logged_packets):
 			
 #Generates up to two pyplot graphs from parameters
 def generate_pyplot_graphs(logged_packets, graphing_ids, graphing_vars, start_time, stop_time, max_points, packet_defs):
-	import matplotlib.pyplot as plt
-	import matplotlib
+	try:
+		import matplotlib.pyplot as plt
+		import matplotlib
+	except ImportError:
+		print("Unable to import matplotlib for graph generation. Will not generate graphs")
+		return
 
 	graph_data = [logged_packets[id].get_even_timerange(max_points, start_time, stop_time) for id in graphing_ids]	
 	x_values = map(timestamp_to_datetime, [packet.timestamp for packet in graph_data[0]]) #Doesn't matter which of the graph datasets we use here, since they are identical. 
@@ -334,29 +337,38 @@ if __name__ == "__main__":
 	packet_defs = {hex(packet["id"]) : packet for packet in cp.loadAsList(expandRepeatPackets=True)['packets']} #BUILD THE PACKET DEFINITIONS FROM .yaml files
 
 	#Basic command line interface.
-	cli_parser = argparse.ArgumentParser(prog='parse_telemetry_log.py', description='Command-line interface for telemetry log parsing. Parses the files within the "logs" folder within the program\'s directory.')
-	cli_parser.add_argument('-p', nargs='*', choices=packet_defs.keys().append('all'), help='A list of CAN packet IDs to include in the parsed csv file.')
-	cli_parser.add_argument('-c', help='Enables parsing to csv file. Include the csv filename as the next argument. Don\'t add .csv')
-	cli_parser.add_argument('-g', nargs='*', help='Enables Command-line interactive graphing of parsed Telemetry data via pyplot. \n Include a list of desired variable names. Variable names must be defined within the desired CAN packet IDs entered.')
-	cli_parser.add_argument('-gt', nargs=2, help='Option to enter a timeframe for graph plotting. If left blank or undefined, the entire time range is used. Takes two arguments: Start, then stop. Format these strings in yyyy-mm-dd-hh.')
+	cli_parser = argparse.ArgumentParser(prog='parse_telemetry_log.py', description='Command-line interface for telemetry log parsing.')
+	cli_parser.add_argument('-p', nargs='*', choices=packet_defs.keys().append('all'), help='Enables parsing of Telemetry data. Include the target folder name as the first argument. After the first argument, give a list of CAN packet IDs to include in the parsed csv file. For instance: -p WSC_2017_Logs 0x201')
+	cli_parser.add_argument('-c', help='Enables parsing to csv file. Include the csv filename as the next argument.')
+	cli_parser.add_argument('-g', nargs='*', help='Enables Command-line interactive graphing of parsed Telemetry data via pyplot. Include a list of desired variable names. Specify variable name using the syntax ID:VAR. For instance: -g 0x201:soc. Variable names must be defined within the desired CAN packet IDs entered.')
 	cli_parser.add_argument('-gp', nargs=1, help='Option to enter a maximum number of data points for graph plotting. If left blank or undefined, a default value of {0} is used.'.format(DEFAULT_MAX_GRAPH_POINTS))
-	cli_parser.add_argument('-m', nargs='*', help='Enables the user to perform mathematical operations on the data. Results are added to the csv file and/or graphed where desired.')
-	cli_parser.add_argument('-r', help='Reads data from an existing .csv file into the program. Include the csv filename as the next argument. Don\'t add .csv')
+	#cli_parser.add_argument('-m', nargs='*', help='Enables the user to perform mathematical operations on the data. Results are added to the csv file and/or graphed where desired.') #NOT IMPLEMENTED YET
+	cli_parser.add_argument('-r', help='Reads data from an existing .csv file into the program. Include the csv filename as the next argument.')
 	args = cli_parser.parse_args()
 
 	#BEGIN PARSING CODE
 	logged_packets  = {} #Dictionary of lists given by packet ID.
-	if args.p != None:
-		if args.p == []: 
-			args.p = 'all'
-		print("Parsing telemetry logs targeting IDs: {0}".format(args.p))
-		
+	if args.p != None and args.p != []:
+		log_folder_name = args.p[0] 
+		if len(args.p) > 1: 
+			target_ids = args.p[1:]
+		else:
+			target_ids = 'all'
+			
 		#Setup data parsing
+		LOGFILE_PATH = os.path.join('..','logs',log_folder_name)
 		skipped_entries, total_entries, error_entries = 0, 0, 0
-		for logfilename in os.listdir('logs/'):
+		try:
+			files = os.listdir(LOGFILE_PATH)
+		except WindowsError:
+			print("Error, invalid file folder path for telemetry log files. Ending the program.")
+			sys.exit()
+		print("Parsing telemetry logs targeting IDs: {0}".format(target_ids))
+			
+		for logfilename in os.listdir(LOGFILE_PATH):
 			if not logfilename.endswith('.txt'):
 				continue
-			with open('logs/' + logfilename, 'r') as f:
+			with open(os.path.join(LOGFILE_PATH, logfilename), 'r') as f:
 				lines = f.readlines()
 				#First three hex values in the hex string will be the packet ID. Sort the packets by their ID
 				file_entries = len(lines)
@@ -380,7 +392,7 @@ if __name__ == "__main__":
 					#print("Want "+" 0x{0}".format(id.lower()))
 
 					#Ensure that we want this packet.
-					if args.p != 'all' and "0x{0}".format(id.lower()) not in args.p:
+					if target_ids != 'all' and "0x{0}".format(id.lower()) not in target_ids:
 						skipped_entries += 1
 						continue
 
@@ -443,18 +455,20 @@ if __name__ == "__main__":
 			f.close()
 			print("Telemetry logfile {0} successfully parsed".format(logfilename))
 		print("\nFinished parsing telemetry data. \n Parsed entries: {3} \n Total entries: {0} \n Skipped entries: {1} \n Invalid entries: {2}".format(total_entries, skipped_entries, error_entries, total_entries - (skipped_entries + error_entries)))
-
+	elif args.r != None:
+		logged_packets = read_csv(args.r, logged_packets)
+	else:
+		print("No data input form selected (choose from -p for parsing or -r for csv reading). Ending the program")
+		sys.exit()
 	#END PARSING CODE
 	
-	if args.r != None:
-		logged_packets = read_csv(args.r, logged_packets)
-
+		
 	print("\nSynchronizing timestamps.")
 	logged_packets = synchronize_packets(logged_packets)	
 		
 	#Perform any desired computations specified in the CLI:
-	if args.m != None:
-		logged_packets = do_math(logged_packets, args.m, packet_defs)
+	#if args.m != None:
+	#	logged_packets = do_math(logged_packets, args.m, packet_defs)
 
 	#Generate csv file if that option was selected in the CLI
 	if args.c != None:
@@ -466,10 +480,7 @@ if __name__ == "__main__":
 		graphing_ids = [arg.split(':')[0][2:] if '0x' in arg.split(':')[0] else arg.split(':')[0] for arg in args.g]
 		graphing_vars = [arg.split(':')[1] for arg in args.g]
 		print("\nGenerating graphs with variables: {0}".format(args.g))
-		if args.gt != None:
-			generate_pyplot_graphs(logged_packets, graphing_ids, graphing_vars, yyyy_mm_dd_hh_to_ts(args.gt[0]), yyyy_mm_dd_hh_to_ts(args.gt[1]), args.gp, packet_defs)
-		else:
-			generate_pyplot_graphs(logged_packets, graphing_ids, graphing_vars, None, None, args.gp, packet_defs)
+		generate_pyplot_graphs(logged_packets, graphing_ids, graphing_vars, None, None, args.gp, packet_defs)
 	else:
 		print("No graphing option selected or invalid graph parameters. Will not generate graphs")
 		
